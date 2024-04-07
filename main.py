@@ -34,13 +34,18 @@ class Record:
         self.phones = [p for p in self.phones if p.value != phone_number]
 
     def edit_phone(self, old_phone_number, new_phone_number):
-        self.phones = [Phone(new_phone_number) if p.value == old_phone_number else p for p in self.phones]
+        for phone in self.phones:
+            if phone.value == old_phone_number:
+                self.phones = [Phone(new_phone_number) if p.value == old_phone_number else p for p in self.phones]
+                break
+        else:
+            raise ValueError('Phone number not found')
 
     def find_phone(self, phone_number):
         try:
-            return next(p.value for p in self.phones if p.value == phone_number)
+            return next(p for p in self.phones if p.value == phone_number)
         except StopIteration:
-            return 'Not found'
+            raise ValueError('Phone number not found')
 
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
@@ -68,7 +73,6 @@ john_record.add_phone("5555555555")
 
 # Додавання запису John до адресної книги
 book.add_record(john_record)
-
 
 # Створення та додавання нового запису для Jane
 jane_record = Record("Jane")
